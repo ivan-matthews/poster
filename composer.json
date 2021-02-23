@@ -1,0 +1,20 @@
+{
+	"name": "ivan-matthews/poster",
+	"description": "Отправка HTTP запросов посредством PHP (без cURL)",
+	"type": "library",
+	"license": "LGPL-2.1",
+	"authors": [
+		{
+			"name": "Ivan Matthews",
+			"email": "ivan.matthews.number.one@gmail.com",
+			"homepage": "https://github.com/ivan-matthews/poster.git"
+		}
+	],
+	"minimum-stability": "dev",
+	"require": {},
+	"autoload": {
+		"psr-4": {
+			"IvanMatthews\\Poster\\": "src"
+		}
+	}
+}
