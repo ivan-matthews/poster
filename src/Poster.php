@@ -52,7 +52,7 @@
 			return $this;
 		}
 
-		public function field($field, $value = ''){
+		public function field($field, $value){
 			$this->fields[$field] = $value;
 			return $this;
 		}
