@@ -68,7 +68,7 @@
 		}
 
 		public function http($key, $value){
-			$this->cookies[$key] = $value;
+			$this->http[$key] = $value;
 			return $this;
 		}
 
