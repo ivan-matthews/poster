@@ -137,7 +137,7 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = $this->request_action;
+			$this->url = self::http_build_action($this->request_action, http_build_query($this->fields));
 			return $this;
 		}
 
@@ -151,7 +151,7 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = $this->request_action;
+			$this->url = self::http_build_action($this->request_action, http_build_query($this->fields));
 			return $this;
 		}
 
@@ -263,3 +263,4 @@
 			return $fields;
 		}
 	}
+
