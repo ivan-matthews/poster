@@ -1,9 +1,10 @@
 <?php
 
-	use IvanMatthews\Poster\Poster;
-	use IvanMatthews\Poster\Interfaces\Common;
+	use IvanMatthews\Poster\Single;
 
 	include_once __DIR__ . "/../src/Poster.php";
+	include_once __DIR__ . "/../src/Response.php";
+	include_once __DIR__ . "/../src/Single.php";
 	include_once __DIR__ . "/../src/Interfaces/Common.php";
 	include_once __DIR__ . "/../src/Interfaces/Getters.php";
 	include_once __DIR__ . "/../src/Interfaces/Poster.php";
@@ -14,25 +15,19 @@
 	error_reporting(E_ALL);
 	ini_set('display_errors', '1');
 
-	$poster = new Poster('https://php.net');
+	$poster = new Single('https://php.net');
 
 	$poster->field('simple','value');
 	$poster->field('simple_1','some value');
 
-	$poster->ready()
-		->call(function(Common $poster){
-			$opts = array(
-				'http'	=> array_merge(array(
-					'method'	=> 'PUT',
-					'header'	=> Poster::http_build_headers($poster->getHeaders()),
-					'content'	=> json_encode($poster->getFields())
-				), $poster->getHttp())
-			);
-			$poster->setContext(stream_context_create($opts));
-			$poster->setUrl($poster->getAction());
-		});
+	$poster = $poster->ready()
+		->post();
 
-	pre($poster->getResponseContent());
+	pre(
+		$poster->getHeaders(true),
+		$poster->getHeaders(false),
+		$poster->getContent()
+	);
 
 
 	if(!function_exists('pre')){

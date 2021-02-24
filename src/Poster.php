@@ -12,12 +12,12 @@
 	/**
 	 * Class Poster
 	 * @package IvanMatthews\Poster
-	 * @method PosterInterface put()
-	 * @method PosterInterface delete()
-	 * @method PosterInterface trace()
-	 * @method PosterInterface patch()
-	 * @method PosterInterface options()
-	 * @method PosterInterface connect()
+	 * @method self put()
+	 * @method self delete()
+	 * @method self trace()
+	 * @method self patch()
+	 * @method self options()
+	 * @method self connect()
 	 */
 	class Poster implements PosterInterface, CommonInterface, GettersInterface, SettersInterface
 	{
@@ -162,7 +162,7 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = self::http_build_uri($this->request_action, http_build_query($this->fields));
+			$this->url = self::http_build_uri($this->request_action, $this->request);
 			return $this;
 		}
 
@@ -176,7 +176,7 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = self::http_build_uri($this->request_action, http_build_query($this->fields));
+			$this->url = self::http_build_uri($this->request_action, $this->request);
 			return $this;
 		}
 

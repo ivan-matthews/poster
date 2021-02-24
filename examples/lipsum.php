@@ -21,4 +21,16 @@
 	
 	$loremIpsumDollor = isset($content['feed']['lipsum']) ? $content['feed']['lipsum'] : null;
 	
-	var_dump($loremIpsumDollor);
+	pre($loremIpsumDollor);
+
+
+	if(!function_exists('pre')){
+		function pre(...$_){
+			print '<pre>';
+			foreach($_ as $item){
+				print_r($item);
+				print '<hr>';
+			}
+			die('</pre>');
+		}
+	}

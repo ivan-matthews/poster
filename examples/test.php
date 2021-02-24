@@ -29,6 +29,16 @@
 	$poster->ready();
 	$poster->post();
 
-	exit($poster->getResponseContent());
+	pre($poster->getResponseContent());
 
 
+	if(!function_exists('pre')){
+		function pre(...$_){
+			print '<pre>';
+			foreach($_ as $item){
+				print_r($item);
+				print '<hr>';
+			}
+			die('</pre>');
+		}
+	}

@@ -1,9 +1,12 @@
 <?php
 
-	use IvanMatthews\Poster\Poster;
+	use IvanMatthews\Poster\Single;
 	use IvanMatthews\Poster\Interfaces\Common;
+	use IvanMatthews\Poster\Poster;
 
 	include_once __DIR__ . "/../src/Poster.php";
+	include_once __DIR__ . "/../src/Response.php";
+	include_once __DIR__ . "/../src/Single.php";
 	include_once __DIR__ . "/../src/Interfaces/Common.php";
 	include_once __DIR__ . "/../src/Interfaces/Getters.php";
 	include_once __DIR__ . "/../src/Interfaces/Poster.php";
@@ -14,12 +17,12 @@
 	error_reporting(E_ALL);
 	ini_set('display_errors', '1');
 
-	$poster = new Poster('https://php.net');
+	$poster = new Single('https://php.net');
 
 	$poster->field('simple','value');
 	$poster->field('simple_1','some value');
 
-	$poster->ready()
+	$poster = $poster->ready()
 		->call(function(Common $poster){
 			$opts = array(
 				'http'	=> array_merge(array(
@@ -30,9 +33,16 @@
 			);
 			$poster->setContext(stream_context_create($opts));
 			$poster->setUrl($poster->getAction());
+			return (new \IvanMatthews\Poster\Response($poster))
+				->load();
 		});
 
-	pre($poster->getResponseContent());
+	pre(
+		$poster->getHeaders(true),
+		$poster->getHeaders(false),
+		$poster->getContent()
+	);
+
 
 
 	if(!function_exists('pre')){
