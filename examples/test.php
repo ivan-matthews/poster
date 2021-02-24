@@ -2,12 +2,12 @@
 
 	use IvanMatthews\Poster\Poster;
 
-	include __DIR__ . "/../src/Poster.php";
+	include_once __DIR__ . "/../src/Poster.php";
 
 	error_reporting(E_ALL);
 	ini_set('display_errors', '1');
 
-	$poster = new Poster('http://my.c/home/blabla');
+	$poster = new Poster('https://php.net');
 
 	$poster->field('name', array(
 		'values takoe to [array]',
@@ -23,8 +23,12 @@
 	$poster->file('file_2', __DIR__ . '/files/file.txt');
 	$poster->file('file_3', __DIR__ . '/files/another_file.txt');
 
-	$poster->send();
+//	$poster->multiPartFormData();
+//	exit($poster->getRequestBody());
+
+	$poster->ready();
 	$poster->post();
 
-	print $poster->getContent();
+	exit($poster->getResponseContent());
+
 

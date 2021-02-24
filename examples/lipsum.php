@@ -2,7 +2,7 @@
 
 	use IvanMatthews\Poster\Poster;
 
-	include __DIR__ . "/../src/Poster.php";
+	include_once __DIR__ . "/../src/Poster.php";
 
 	error_reporting(E_ALL);
 	ini_set('display_errors', '1');
@@ -14,10 +14,10 @@
 	$poster->field('start', 'yes');
 	$poster->field('generate', 'Сгенерировать Lorem Ipsum');
 	
-	$poster->send()
+	$poster->ready()
 		->post();
 		
-	$content = json_decode($poster->getContent(), true);
+	$content = json_decode($poster->getResponseContent(), true);
 	
 	$loremIpsumDollor = isset($content['feed']['lipsum']) ? $content['feed']['lipsum'] : null;
 	

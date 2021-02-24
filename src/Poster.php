@@ -2,18 +2,28 @@
 
 	namespace IvanMatthews\Poster;
 
+	use IvanMatthews\Poster\Traits\Getters as GettersTrait;
+	use IvanMatthews\Poster\Traits\Setters as SettersTrait;
+	use IvanMatthews\Poster\Interfaces\Poster as PosterInterface;
+	use IvanMatthews\Poster\Interfaces\Common as CommonInterface;
+	use IvanMatthews\Poster\Interfaces\Getters as GettersInterface;
+	use IvanMatthews\Poster\Interfaces\Setters as SettersInterface;
+
 	/**
 	 * Class Poster
 	 * @package IvanMatthews\Poster
-	 * @method self put()
-	 * @method self delete()
-	 * @method self trace()
-	 * @method self patch()
-	 * @method self options()
-	 * @method self connect()
+	 * @method PosterInterface put()
+	 * @method PosterInterface delete()
+	 * @method PosterInterface trace()
+	 * @method PosterInterface patch()
+	 * @method PosterInterface options()
+	 * @method PosterInterface connect()
 	 */
-	class Poster
+	class Poster implements PosterInterface, CommonInterface, GettersInterface, SettersInterface
 	{
+		use GettersTrait;
+		use SettersTrait;
+
 		protected $request_enctype;
 		protected $request_action;
 		protected $request_boundary;
@@ -26,8 +36,13 @@
 
 		protected $url;
 		protected $context;
-		protected $content = '';
+		protected $request = '';
 
+		/**
+		 * @param $name
+		 * @param $arguments
+		 * @return PosterInterface
+		 */
 		public function __call($name, $arguments)
 		{
 			return $this->any(strtoupper($name));
@@ -76,28 +91,38 @@
 			$this->boundary();
 			$this->enctype('multipart/form-data')
 				->header('Content-Type', $this->request_enctype . '; ' . 'boundary=' . $this->request_boundary);
-			$this->content = "--" . $this->request_boundary . "\r\n";
-			$this->content .= self::http_build_boundary($this->request_boundary, $this->fields);
-			$this->content .= trim(self::http_build_boundary_files($this->request_boundary, $this->files));
-			$this->content .= '--' . "\r\n";
+			$this->request = "--" . $this->request_boundary;
+			if($this->fields){
+				$this->request .= "\r\n";
+				$this->request .= trim(self::http_build_boundary($this->request_boundary, $this->fields));
+			}
+			if($this->files){
+				$this->request .= "\r\n";
+				$this->request .= trim(self::http_build_files($this->request_boundary, $this->files));
+			}
+			$this->request .= '--' . "\r\n";
 			return $this;
+		}
+
+		public function getRequestBody(){
+			return $this->request;
 		}
 
 		public function textPlain(){
 			$this->enctype('text/plain')
 				->header('Content-Type', $this->request_enctype);
-			$this->content = trim(self::http_build_text($this->fields));
+			$this->request = trim(self::http_build_text($this->fields));
 			return $this;
 		}
 
 		public function applicationXWwwFormUrlEncoded(){
 			$this->enctype('application/x-www-form-urlencoded')
 				->header('Content-Type', $this->request_enctype);
-			$this->content = http_build_query($this->fields);
+			$this->request = http_build_query($this->fields);
 			return $this;
 		}
 
-		public function send(){
+		public function ready(){
 			$this->prepareRequest();
 			$this->header('Cookie', self::http_build_cookies($this->cookies));
 			return $this;
@@ -111,17 +136,17 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = self::http_build_action($this->request_action, http_build_query($this->fields));
+			$this->url = self::http_build_uri($this->request_action, $this->request);
 			return $this;
 		}
 
 		public function post(){
-			$this->header('Content-Length', mb_strlen($this->content));
+			$this->header('Content-Length', mb_strlen($this->request));
 			$opts = array(
 				'http'	=> array_merge(array(
 					'method'	=> 'POST',
 					'header'	=> self::http_build_headers($this->headers),
-					'content'	=> $this->content,
+					'content'	=> $this->request,
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
@@ -137,33 +162,29 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = self::http_build_action($this->request_action, http_build_query($this->fields));
+			$this->url = self::http_build_uri($this->request_action, http_build_query($this->fields));
 			return $this;
 		}
 
 		public function any($method){
-			$this->header('Content-Length', mb_strlen($this->content));
+			$this->header('Content-Length', mb_strlen($this->request));
 			$opts = array(
 				'http'	=> array_merge(array(
 					'method'	=> $method,
 					'header'	=> self::http_build_headers($this->headers),
-					'content'	=> $this->content,
+					'content'	=> $this->request,
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = self::http_build_action($this->request_action, http_build_query($this->fields));
+			$this->url = self::http_build_uri($this->request_action, http_build_query($this->fields));
 			return $this;
 		}
 
-		public function getContent(){
+		public function getResponseContent(){
 			return file_get_contents($this->url, false, $this->context);
 		}
 
-		/**
-		 * @param bool $assoc
-		 * @return array
-		 */
-		public function getHeaders($assoc = true){
+		public function getResponseHeaders($assoc = true){
 			return get_headers($this->url, $assoc, $this->context);
 		}
 
@@ -215,7 +236,7 @@
 			return implode("\r\n", $headers);
 		}
 
-		public static function http_build_action($action, $content){
+		public static function http_build_uri($action, $content){
 			return $action . '?' . $content;
 		}
 
@@ -234,12 +255,12 @@
 			return $content;
 		}
 
-		public static function http_build_boundary_files($boundary, $files_list, $key = null){
+		public static function http_build_files($boundary, $files_list, $key = null){
 			$content = '';
 			foreach($files_list as $field_name => $field_value){
 				$field_name = $key ? "{$key}[$field_name]" : $field_name;
 				if(is_array($field_value)){
-					$content .= self::http_build_boundary_files($boundary, $field_value, $field_name);
+					$content .= self::http_build_files($boundary, $field_value, $field_name);
 				}else{
 					$content .= "Content-Disposition: form-data; name=\"{$field_name}\"; filename=\"" . basename($field_value) . "\"\r\n";
 					$content .= "Content-Type: " . mime_content_type($field_value) . "\r\n\r\n";
@@ -250,7 +271,7 @@
 			return $content;
 		}
 
-		public static function http_build_text(array $fields_list, $field_name = null){
+		public static function http_build_text($fields_list, $field_name = null){
 			$fields = '';
 			foreach($fields_list as $key => $value){
 				$key = $field_name ? "{$field_name}[$key]" : $key;
@@ -263,4 +284,3 @@
 			return $fields;
 		}
 	}
-
