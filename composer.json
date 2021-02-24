@@ -14,9 +14,7 @@
 	"require": {},
 	"autoload": {
 		"psr-4": {
-			"IvanMatthews\\Poster\\": "src",
-			"IvanMatthews\\Poster\\Traits\\": "traits",
-			"IvanMatthews\\Poster\\Intarfaces\\": "interfaces"
+			"IvanMatthews\\Poster\\": "src"
 		}
 	}
 }
