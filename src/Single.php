@@ -15,14 +15,16 @@
 	class Single extends Poster
 	{
 
-		public function __construct($action){
+		public function __construct($action)
+		{
 			parent::__construct($action);
 		}
 
 		/**
 		 * @return Response
 		 */
-		public function get(){
+		public function get()
+		{
 			parent::get();
 			return (new Response($this))->load();
 		}
@@ -30,7 +32,8 @@
 		/**
 		 * @return Response
 		 */
-		public function post(){
+		public function post()
+		{
 			parent::post();
 			return (new Response($this))
 				->load();
@@ -39,7 +42,8 @@
 		/**
 		 * @return Response
 		 */
-		public function head(){
+		public function head()
+		{
 			parent::head();
 			return (new Response($this))
 				->load();
@@ -47,9 +51,11 @@
 
 		/**
 		 * @param $method
+		 * @param $action
 		 * @return Response
 		 */
-		public function any($method){
+		public function any($method, $action = null)
+		{
 			parent::any($method);
 			return (new Response($this))
 				->load();

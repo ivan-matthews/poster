@@ -4,47 +4,58 @@
 
 	trait Getters
 	{
-		public function getEnctype(){
+		public function getEnctype()
+		{
 			return $this->request_enctype;
 		}
 
-		public function getAction(){
+		public function getAction()
+		{
 			return $this->request_action;
 		}
 
-		public function getBoundary(){
+		public function getBoundary()
+		{
 			return $this->request_boundary;
 		}
 
-		public function getFiles(){
+		public function getFiles()
+		{
 			return $this->files;
 		}
 
-		public function getFields(){
+		public function getFields()
+		{
 			return $this->fields;
 		}
 
-		public function getHeaders(){
+		public function getHeaders()
+		{
 			return $this->headers;
 		}
 
-		public function getCookies(){
+		public function getCookies()
+		{
 			return $this->cookies;
 		}
 
-		public function getHttp(){
+		public function getHttp()
+		{
 			return $this->http;
 		}
 
-		public function getUrl(){
+		public function getUrl()
+		{
 			return $this->url;
 		}
 
-		public function getContext(){
+		public function getContext()
+		{
 			return $this->context;
 		}
 
-		public function getRequest(){
+		public function getRequest()
+		{
 			return $this->request;
 		}
 	}
