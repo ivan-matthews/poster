@@ -33,6 +33,7 @@
 		protected $headers = array();
 		protected $cookies = array();
 		protected $http = array();
+		protected $params = array();
 
 		protected $url;
 		protected $context;
@@ -95,6 +96,12 @@
 			return $this;
 		}
 
+		public function param($name, $value)
+		{
+			$this->params[$name] = $value;
+			return $this;
+		}
+
 		public function multiPartFormData()
 		{
 			$this->boundary();
@@ -141,7 +148,7 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = self::http_build_uri($this->request_action, $this->request);
+			$this->url = self::http_build_uri($this->request_action, http_build_query(array_merge($this->fields, $this->params)));
 			return $this;
 		}
 
@@ -156,7 +163,7 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = $this->request_action;
+			$this->url = self::http_build_uri($this->request_action, http_build_query($this->params));
 			return $this;
 		}
 
@@ -169,7 +176,7 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = self::http_build_uri($this->request_action, $this->request);
+			$this->url = self::http_build_uri($this->request_action, http_build_query(array_merge($this->fields, $this->params)));
 			return $this;
 		}
 
@@ -184,7 +191,7 @@
 				), $this->http)
 			);
 			$this->context = stream_context_create($opts);
-			$this->url = $action ?: $this->request_action;
+			$this->url = $action ?: self::http_build_uri($this->request_action,  http_build_query($this->params));
 			return $this;
 		}
 
@@ -254,16 +261,16 @@
 
 		public static function http_build_uri($action, $content)
 		{
-			return $action . '?' . $content;
+			return $content ? $action . '?' . $content : $action;
 		}
 
-		public static function http_build_boundary($boundary, $fields_list, $key = null)
+		public static function http_build_boundary_fields($boundary, $fields_list, $key = null)
 		{
 			$content = '';
 			foreach ($fields_list as $field_name => $field_value) {
 				$field_name = $key ? "{$key}[$field_name]" : $field_name;
 				if (is_array($field_value)) {
-					$content .= self::http_build_boundary($boundary, $field_value, $field_name);
+					$content .= self::http_build_boundary_fields($boundary, $field_value, $field_name);
 				} else {
 					$content .= "Content-Disposition: form-data; name=\"{$field_name}\"\r\n\r\n";
 					$content .= "{$field_value}\r\n";
@@ -273,13 +280,13 @@
 			return $content;
 		}
 
-		public static function http_build_files($boundary, $files_list, $key = null)
+		public static function http_build_boundary_files($boundary, $files_list, $key = null)
 		{
 			$content = '';
 			foreach ($files_list as $field_name => $field_value) {
 				$field_name = $key ? "{$key}[$field_name]" : $field_name;
 				if (is_array($field_value)) {
-					$content .= self::http_build_files($boundary, $field_value, $field_name);
+					$content .= self::http_build_boundary_files($boundary, $field_value, $field_name);
 				} else {
 					$content .= "Content-Disposition: form-data; name=\"{$field_name}\"; filename=\"" . basename($field_value) . "\"\r\n";
 					$content .= "Content-Type: " . mime_content_type($field_value) . "\r\n\r\n";
@@ -294,11 +301,11 @@
 			$request = "--" . $boundary;
 			if ($fields) {
 				$request .= "\r\n";
-				$request .= trim(self::http_build_boundary($boundary, $fields));
+				$request .= trim(self::http_build_boundary_fields($boundary, $fields));
 			}
 			if ($files) {
 				$request .= "\r\n";
-				$request .= trim(self::http_build_files($boundary, $files));
+				$request .= trim(self::http_build_boundary_files($boundary, $files));
 			}
 			return $request . '--' . "\r\n";
 		}

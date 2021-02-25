@@ -1,2 +1,0 @@
-file name = another file.txt;
-file size = 50 bytes

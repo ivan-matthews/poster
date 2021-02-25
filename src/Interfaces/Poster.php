@@ -18,6 +18,8 @@
 
 		public function http($key, $value);
 
+		public function param($name, $value);
+
 		public function multiPartFormData();
 
 		public function getRequestBody();

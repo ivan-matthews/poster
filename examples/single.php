@@ -12,25 +12,17 @@
 	include_once __DIR__ . "/../src/Response.php";
 	include_once __DIR__ . "/../src/Single.php";
 
-	if (!function_exists('pre')) {
-		function pre(...$_)
-		{
-			print '<pre>';
-			foreach ($_ as $item) {
-				print_r($item);
-				print '<hr>';
-			}
-			die('</pre>');
-		}
-	}
+	include __DIR__ . "/helpers/functions.php";
 
-	error_reporting(E_ALL);
-	ini_set('display_errors', '1');
+//	unset($GLOBALS['_SERVER']);
+	$host = ivanMatthewsPosterUniqueFunctionPrefix__getRemoteHost() or die('unknown http host');
 
-	$poster = new Single('https://php.net');
+	$poster = new Single($host);
 
 	$poster->field('simple', 'value');
 	$poster->field('simple_1', 'some value');
+
+	$poster->param('get_param', 'get_value');
 
 	$poster = $poster->ready()
 		->post();

@@ -10,20 +10,7 @@
 	include_once __DIR__ . "/../src/Traits/Setters.php";
 	include_once __DIR__ . "/../src/Poster.php";
 
-	if (!function_exists('pre')) {
-		function pre(...$_)
-		{
-			print '<pre>';
-			foreach ($_ as $item) {
-				print_r($item);
-				print '<hr>';
-			}
-			die('</pre>');
-		}
-	}
-
-	error_reporting(E_ALL);
-	ini_set('display_errors', '1');
+	include __DIR__ . "/helpers/functions.php";
 
 	$poster = new Poster('https://ru.lipsum.com/feed/json');
 

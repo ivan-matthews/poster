@@ -1,2 +1,0 @@
-file name = file.txt;
-file size = 42 bytes
