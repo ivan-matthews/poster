@@ -9,13 +9,14 @@
 	include_once __DIR__ . "/../src/Interfaces/Setters.php";
 	include_once __DIR__ . "/../src/Traits/Getters.php";
 	include_once __DIR__ . "/../src/Traits/Setters.php";
+	include_once __DIR__ . "/../src/Helpers/Statical.php";
 	include_once __DIR__ . "/../src/Poster.php";
 	include_once __DIR__ . "/../src/Response.php";
 
-	include __DIR__ . "/helpers/functions.php";
+	include_once __DIR__ . "/helpers/functions.php";
 
 //	unset($GLOBALS['_SERVER']);
-	$host = ivanMatthewsPosterUniqueFunctionPrefix__getRemoteHost() or die('unknown http host');
+	$host = getPosterRemoteHost() or die('unknown http host');
 
 	$poster = new Poster($host);
 
@@ -91,7 +92,6 @@
 	 * )
 	 */
 //	pre($poster->getResponseHeaders(), $poster->getResponseHeaders(false), $poster->getResponseContent());	// 3 requests
-
 	/**
 	 * @result
 	 * Array
@@ -157,6 +157,7 @@
 	 *    [19] => Cache-Control: max-age=0
 	 * )
 	 */
+
 	$response = new Response($poster);
 	$response->load();
 	pre($response->getHeaders(), $response->getHeaders(false), $response->getContent());        // 1 request

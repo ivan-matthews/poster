@@ -8,9 +8,10 @@
 	include_once __DIR__ . "/../src/Interfaces/Setters.php";
 	include_once __DIR__ . "/../src/Traits/Getters.php";
 	include_once __DIR__ . "/../src/Traits/Setters.php";
+	include_once __DIR__ . "/../src/Helpers/Statical.php";
 	include_once __DIR__ . "/../src/Poster.php";
 
-	include __DIR__ . "/helpers/functions.php";
+	include_once __DIR__ . "/helpers/functions.php";
 
 	$poster = new Poster('https://ru.lipsum.com/feed/json');
 

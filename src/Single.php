@@ -26,7 +26,8 @@
 		public function get()
 		{
 			parent::get();
-			return (new Response($this))->load();
+			return (new Response($this))
+				->load();
 		}
 
 		/**

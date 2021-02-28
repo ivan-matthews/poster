@@ -8,12 +8,13 @@
 	include_once __DIR__ . "/../src/Interfaces/Setters.php";
 	include_once __DIR__ . "/../src/Traits/Getters.php";
 	include_once __DIR__ . "/../src/Traits/Setters.php";
+	include_once __DIR__ . "/../src/Helpers/Statical.php";
 	include_once __DIR__ . "/../src/Poster.php";
 
-	include __DIR__ . "/helpers/functions.php";
+	include_once __DIR__ . "/helpers/functions.php";
 
 //	unset($GLOBALS['_SERVER']);
-	$host = ivanMatthewsPosterUniqueFunctionPrefix__getRemoteHost() or die('unknown http host');
+	$host = getPosterRemoteHost() or die('unknown http host');
 
 	$poster = new Poster($host);
 
