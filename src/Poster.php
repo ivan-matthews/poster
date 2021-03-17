@@ -40,6 +40,8 @@
 		protected $context;
 		protected $request = '';
 
+		protected $opts;
+
 		/**
 		 * @param $name
 		 * @param $arguments
@@ -137,13 +139,13 @@
 
 		public function get()
 		{
-			$opts = array(
+			$this->opts = array(
 				'http' => array_merge(array(
 					'method' => 'GET',
 					'header' => Statical::http_build_headers($this->headers),
 				), $this->http)
 			);
-			$this->context = stream_context_create($opts);
+			$this->context = stream_context_create($this->opts);
 			$this->url = Statical::http_build_uri($this->request_action, http_build_query(array_merge($this->fields, $this->params)));
 			return $this;
 		}
@@ -151,27 +153,27 @@
 		public function post()
 		{
 			$this->header('Content-Length', mb_strlen($this->request));
-			$opts = array(
+			$this->opts = array(
 				'http' => array_merge(array(
 					'method' => 'POST',
 					'header' => Statical::http_build_headers($this->headers),
 					'content' => $this->request,
 				), $this->http)
 			);
-			$this->context = stream_context_create($opts);
+			$this->context = stream_context_create($this->opts);
 			$this->url = Statical::http_build_uri($this->request_action, http_build_query($this->params));
 			return $this;
 		}
 
 		public function head()
 		{
-			$opts = array(
+			$this->opts = array(
 				'http' => array_merge(array(
 					'method' => 'HEAD',
 					'header' => Statical::http_build_headers($this->headers),
 				), $this->http)
 			);
-			$this->context = stream_context_create($opts);
+			$this->context = stream_context_create($this->opts);
 			$this->url = Statical::http_build_uri($this->request_action, http_build_query(array_merge($this->fields, $this->params)));
 			return $this;
 		}
@@ -179,14 +181,14 @@
 		public function any($method, $action = null)
 		{
 			$this->header('Content-Length', mb_strlen($this->request));
-			$opts = array(
+			$this->opts = array(
 				'http' => array_merge(array(
 					'method' => $method,
 					'header' => Statical::http_build_headers($this->headers),
 					'content' => $this->request,
 				), $this->http)
 			);
-			$this->context = stream_context_create($opts);
+			$this->context = stream_context_create($this->opts);
 			$this->url = $action ?: Statical::http_build_uri($this->request_action,  http_build_query($this->params));
 			return $this;
 		}
@@ -231,4 +233,7 @@
 			return $this;
 		}
 
+		public function getOpts(){
+			return $this->opts;
+		}
 	}

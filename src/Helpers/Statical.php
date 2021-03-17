@@ -27,6 +27,7 @@
 		{
 			$headers = array();
 			foreach ($headers_list as $key => $value) {
+				if(empty($value)){ continue; }
 				$headers[] = $key . ': ' . $value;
 			}
 			return implode("\r\n", $headers);
